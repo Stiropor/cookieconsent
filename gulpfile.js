@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var minifyJS = require('gulp-uglify');
+var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var deleteDirs = require('del');
 var runSequence = require('run-sequence');
@@ -15,15 +16,8 @@ var buildFolder = './build';
 var jsBuildFiles = [
   './src/cookieconsent.js'
 ];
-var cssBuildFiles = [
-  // defined explicitly so they are combined in order
-  './src/styles/animation.css',
-  './src/styles/base.css',
-  './src/styles/layout.css',
-  './src/styles/media.css',
-
-  // all theme files
-  './src/styles/themes/*.css',
+var sassBuildFiles = [
+  './src/scss/cookieconsent.scss'
 ];
 
 
@@ -38,12 +32,12 @@ gulp.task('minify:js', function () {
     .pipe(gulp.dest(buildFolder));          // save under a new name
 });
 
-gulp.task('minify:css', function () {
-  return gulp.src(cssBuildFiles)            // get files
-    .pipe(autoprefixer({browsers: ['IE 10', 'last 2 versions']}))
-    .pipe(minifyCSS())                      // minify them
-    .pipe(concat('cookieconsent.min.css'))  // combine them
-    .pipe(gulp.dest(buildFolder));          // save under a new name
+gulp.task('minify:sass', function () {
+	return gulp.src(sassBuildFiles)				// get files
+		.pipe(sass())							// compile scss sass files
+		.pipe(minifyCSS())                      // minify them
+		.pipe(concat('cookieconsent.min.css'))  // combine them
+		.pipe(gulp.dest(buildFolder));			// save under a new name
 });
 
 gulp.task('bump', function(callback) {
@@ -53,12 +47,12 @@ gulp.task('bump', function(callback) {
 });
 
 gulp.task('build', function(callback) {
-  return runSequence('cleanup:begin', 'minify:js', 'minify:css', callback);
+  return runSequence('cleanup:begin', 'minify:js', 'minify:sass', callback);
 });
 
 gulp.task('verify', function(callback) {
   buildFolder = "./build-verify";
-  return runSequence('cleanup:begin', 'minify:js', 'minify:css', 'verify:diff', callback);
+  return runSequence('cleanup:begin', 'minify:js', 'minify:sass', 'verify:diff', callback);
 });
 
 gulp.task('verify:diff', function(callback) {
@@ -76,7 +70,7 @@ gulp.task('build:release', function(callback) {
 });
 
 gulp.task('watch', function() {
-  gulp.watch(cssBuildFiles.concat(jsBuildFiles), ['build']);
+  gulp.watch(sassBuildFiles.concat(jsBuildFiles), ['build']);
 });
 
 function _minify(opts) {
