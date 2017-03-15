@@ -898,11 +898,13 @@
 
     function applyAutoDismiss() {
       var setStatus = this.setStatus.bind(this);
+      var setClose = this.close.bind(this);
 
       var delay = this.options.dismissOnTimeout;
       if (typeof delay == 'number' && delay >= 0) {
         this.dismissTimeout = window.setTimeout(function() {
           setStatus(cc.status.dismiss);
+          setClose(true);
         }, Math.floor(delay));
       }
 
@@ -911,6 +913,7 @@
         var onWindowScroll = function(evt) {
           if (window.pageYOffset > Math.floor(scrollRange)) {
             setStatus(cc.status.dismiss);
+            setClose(true);
 
             window.removeEventListener('scroll', onWindowScroll);
             this.onWindowScroll = null;
