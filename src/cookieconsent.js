@@ -212,7 +212,7 @@
         link: 'Learn more',
         href: 'http://cookiesandyou.com',
         close: '&#x274c;',
-		target: '_blank',
+        target: '_blank',
       },
 
       // This is the HTML for the elements above. The string {{header}} will be replaced with the equivalent text below.
